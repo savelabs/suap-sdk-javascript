@@ -43,7 +43,9 @@
   "scripts": {
     "prepare": "husky install",
     "lint": "eslint",
-    "test": "jest"
+    "test": "jest",
+    "lint:ci": "eslint --fix",
+    "test:ci": "jest --bail --findRelatedTests"
   },
   "config": {
     "commitizen": {
