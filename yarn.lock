@@ -4723,10 +4723,10 @@ unbox-primitive@^1.0.1:
     has-symbols "^1.0.2"
     which-boxed-primitive "^1.0.2"
 
-undici@^4.7.3:
-  version "4.8.0"
-  resolved "https://registry.yarnpkg.com/undici/-/undici-4.8.0.tgz#17d84f902b210a2ee5edc2f8bcc2df2ed7f1c4a7"
-  integrity sha512-+JlCKo5bJ9lMtElHMN2LwFtHqg3ovelCsuS6R4vCIJ/Js3NbP4OE3XOLOQjj9pitXJePi2mr12cteLqcbylpxQ==
+undici@^4.9.5:
+  version "4.9.5"
+  resolved "https://registry.yarnpkg.com/undici/-/undici-4.9.5.tgz#6531b6b2587c2c42d77c0dded83d058a328775f8"
+  integrity sha512-t59IFVYiMnFThboJL9izqwsDEfSbZDPZ/8iCYBCkEFLy63x9m4YaNt0E+r5+X993syC9M0W/ksusZC9YuAamMg==
 
 universalify@^0.1.0, universalify@^0.1.2:
   version "0.1.2"
