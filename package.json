@@ -21,7 +21,7 @@
     "tough-cookie": "^4.0.0"
   },
   "devDependencies": {
-    "@commitlint/cli": "^13.2.1",
+    "@commitlint/cli": "^15.0.0",
     "@commitlint/config-conventional": "^13.2.0",
     "@types/jest": "^27.0.2",
     "@types/tough-cookie": "^4.0.1",
