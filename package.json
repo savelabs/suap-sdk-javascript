@@ -13,7 +13,7 @@
     "sdk"
   ],
   "dependencies": {
-    "@babel/preset-env": "^7.16.4",
+    "@babel/preset-env": "^7.16.8",
     "@babel/preset-typescript": "^7.16.0",
     "axios": "^0.24.0",
     "axios-cookiejar-support": "^2.0.3",
