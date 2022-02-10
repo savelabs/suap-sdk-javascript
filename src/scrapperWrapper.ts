@@ -21,8 +21,18 @@ export class ScrapperWrapper {
         password,
         this_is_the_login_form: "1",
         csrfmiddlewaretoken: cookieString.split("csrftoken=")[1].split(";")[0]
-      }).toString()
+      }).toString(),
+      {
+        headers: {
+          Host: "suap.ifrn.edu.br",
+          Origin: "https://suap.ifrn.edu.br",
+          Referer: "https://suap.ifrn.edu.br/accounts/login/?next=",
+          "User-Agent": "Aplicativo Save"
+        }
+      }
     )
+
+    await this.scrapperInstance.get("/")
   }
 
   get credentials() {
