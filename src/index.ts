@@ -20,4 +20,8 @@ export class Client {
       scrapper: this.scrapperWrapper.credentials
     }
   }
+
+  async getInfo() {
+    return await this.apiWrapper.getInfo()
+  }
 }
