@@ -1,6 +1,6 @@
 import { ApiWrapper } from "./apiWrapper"
 import { ScrapperWrapper } from "./scrapperWrapper"
-import { PeríodoLetivo } from "./types"
+import { InformaçõesPessoais, PeríodoLetivo } from "./types"
 
 export class Client {
   private readonly apiWrapper = new ApiWrapper()
@@ -22,7 +22,7 @@ export class Client {
     }
   }
 
-  async obterInformações() {
+  async obterInformaçõesPessoas(): Promise<InformaçõesPessoais> {
     return await this.apiWrapper.obterInformações()
   }
 
