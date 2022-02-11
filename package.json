@@ -13,7 +13,7 @@
     "sdk"
   ],
   "dependencies": {
-    "@babel/preset-env": "^7.16.4",
+    "@babel/preset-env": "^7.16.11",
     "@babel/preset-typescript": "^7.16.0",
     "axios": "^0.25.0",
     "axios-cookiejar-support": "^2.0.3",
@@ -40,10 +40,10 @@
     "eslint-plugin-promise": "^5.1.1",
     "husky": "^7.0.4",
     "jest": "^27.5.1",
-    "lint-staged": "^12.0.3",
+    "lint-staged": "^12.3.3",
     "prettier": "^2.4.1",
     "ts-jest": "^27.1.3",
-    "typescript": "^4.5.2"
+    "typescript": "^4.5.5"
   },
   "scripts": {
     "prepare": "husky install",
