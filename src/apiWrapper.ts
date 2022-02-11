@@ -1,4 +1,5 @@
 import axios from "axios"
+import { Boletim, PeríodoLetivo } from "./types"
 
 export class ApiWrapper {
   public token = ""
@@ -21,8 +22,26 @@ export class ApiWrapper {
     this.instance.defaults.headers.common.Authorization = `JWT ${this.token}`
   }
 
-  async getInfo() {
+  async obterInformações() {
     const response = await this.instance.get("/minhas-informacoes/meus-dados/")
+    return response.data
+  }
+
+  async obterPeríodosLetivos(): Promise<PeríodoLetivo[]> {
+    const response = await this.instance.get(
+      "/minhas-informacoes/meus-periodos-letivos/"
+    )
+    return response.data
+  }
+
+  async obterNotas(
+    anoLetivo: number,
+    períodoLetivo: number
+  ): Promise<Boletim[]> {
+    const response = await this.instance.get(
+      `/minhas-informacoes/boletim/${anoLetivo}/${períodoLetivo}/`
+    )
+
     return response.data
   }
 }

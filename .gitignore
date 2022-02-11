@@ -118,3 +118,5 @@ dist
 .pnp.*
 
 .tool-versions
+
+.vscode

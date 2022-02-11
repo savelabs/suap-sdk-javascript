@@ -1,5 +1,6 @@
 import { ApiWrapper } from "./apiWrapper"
 import { ScrapperWrapper } from "./scrapperWrapper"
+import { PeríodoLetivo } from "./types"
 
 export class Client {
   private readonly apiWrapper = new ApiWrapper()
@@ -21,7 +22,15 @@ export class Client {
     }
   }
 
-  async getInfo() {
-    return await this.apiWrapper.getInfo()
+  async obterInformações() {
+    return await this.apiWrapper.obterInformações()
+  }
+
+  async obterPeríodosLetivos(): Promise<PeríodoLetivo[]> {
+    return await this.apiWrapper.obterPeríodosLetivos()
+  }
+
+  async obterNotas(anoLetivo: number, períodoLetivo: number) {
+    return await this.apiWrapper.obterNotas(anoLetivo, períodoLetivo)
   }
 }
