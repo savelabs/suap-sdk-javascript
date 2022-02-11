@@ -1,7 +1,8 @@
 {
   "name": "suap-sdk-javascript",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "license": "MIT",
   "author": "Vitor Daniel",
   "description": "",
@@ -46,6 +47,7 @@
     "typescript": "^4.5.5"
   },
   "scripts": {
+    "prepublish": "tsc",
     "prepare": "husky install",
     "lint": "eslint",
     "test": "jest",
