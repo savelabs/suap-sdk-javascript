@@ -1,6 +1,8 @@
 import axios from "axios"
 import { wrapper } from "axios-cookiejar-support"
 import { CookieJar } from "tough-cookie"
+import cheerio from "cheerio"
+import { chunk, zipObject } from "./utils"
 
 export class ScrapperWrapper {
   private jar = new CookieJar()
@@ -8,7 +10,11 @@ export class ScrapperWrapper {
     axios.create({ baseURL: "https://suap.ifrn.edu.br", jar: this.jar })
   )
 
+  public matriculation: string
+
   async login(matriculation: string, password: string) {
+    this.matriculation = matriculation
+
     await this.scrapperInstance.get("/")
     const cookieString = await this.jar.getCookieString(
       "https://suap.ifrn.edu.br"
@@ -37,5 +43,52 @@ export class ScrapperWrapper {
 
   get credentials() {
     return this.jar.getCookieStringSync("https://suap.ifrn.edu.br")
+  }
+
+  async detalharNota(códigoDiário: string) {
+    let response = await this.scrapperInstance.get(
+      `/edu/aluno/${this.matriculation}/?tab=boletim`
+    )
+    let $ = cheerio.load(response.data)
+
+    const href = $(`tr:has(> td:contains("${códigoDiário}")) > td > a`).attr(
+      "href"
+    )
+
+    response = await this.scrapperInstance.get(href)
+
+    $ = cheerio.load(response.data)
+
+    const teachers = $("#content > div:nth-child(3) > div").text()
+
+    const titles = $("#content > div:nth-child(4) > div > h4")
+      .toArray()
+      .map((el) => $(el).text().replace(/\s+/g, " "))
+
+    const data = $("#content > div:nth-child(4) > div > table")
+      .toArray()
+      .map((el) => {
+        const $el = $(el)
+        const data = $el
+          .find("td")
+          .toArray()
+          .map((el) => $(el).text())
+        const result = []
+        chunk(data, 5).forEach((chunk: string[]) => {
+          result.push({
+            Sigla: chunk[0],
+            Tipo: chunk[1],
+            Descrição: chunk[2],
+            Peso: chunk[3],
+            "Nota Obtida": chunk[4]
+          })
+        })
+        return result
+      })
+
+    return {
+      Professores: teachers.trim(),
+      "Detalhamento das Notas": zipObject(titles, data)
+    }
   }
 }
