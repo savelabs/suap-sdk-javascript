@@ -40,4 +40,8 @@ export class Client {
   async detalharNota(códigoDiário: string) {
     return await this.scrapperWrapper.detalharNota(códigoDiário)
   }
+
+  async obterDocumentos() {
+    return await this.scrapperWrapper.obterDocumentos()
+  }
 }

@@ -47,7 +47,7 @@ export class ScrapperWrapper {
 
   async detalharNota(códigoDiário: string) {
     let response = await this.scrapperInstance.get(
-      `/edu/aluno/${this.matriculation}/?tab=boletim`
+      `/edu/aluno/${this.matriculation}/`
     )
     let $ = cheerio.load(response.data)
 
@@ -90,5 +90,27 @@ export class ScrapperWrapper {
       Professores: teachers.trim(),
       "Detalhamento das Notas": zipObject(titles, data)
     }
+  }
+
+  async obterDocumentos() {
+    const response = await this.scrapperInstance.get(
+      `/edu/aluno/${this.matriculation}/`
+    )
+
+    const $ = cheerio.load(response.data)
+
+    const documents = $(
+      "#content > div.title-container > div.action-bar-container > ul > li:nth-child(2) > ul > li > a"
+    )
+      .toArray()
+      .map((el) => {
+        const $el = $(el)
+        return {
+          Nome: $el.text(),
+          Link: $el.attr("href")
+        }
+      })
+
+    return documents
   }
 }
