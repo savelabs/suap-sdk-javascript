@@ -1,4 +1,3 @@
-// function to split array ino chunks of size n
 export function chunk(array: any[], n: number) {
   return array.reduce((acc, val, i) => {
     if (i % n === 0) {

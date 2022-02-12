@@ -3,6 +3,7 @@ import { wrapper } from "axios-cookiejar-support"
 import { CookieJar } from "tough-cookie"
 import cheerio from "cheerio"
 import { chunk, zipObject } from "./utils"
+import { DetalhesNota, Documento } from "./types"
 
 export class ScrapperWrapper {
   private jar = new CookieJar()
@@ -45,7 +46,7 @@ export class ScrapperWrapper {
     return this.jar.getCookieStringSync("https://suap.ifrn.edu.br")
   }
 
-  async detalharNota(códigoDiário: string) {
+  async detalharNota(códigoDiário: string): Promise<DetalhesNota> {
     let response = await this.scrapperInstance.get(
       `/edu/aluno/${this.matriculation}/`
     )
@@ -92,7 +93,7 @@ export class ScrapperWrapper {
     }
   }
 
-  async obterDocumentos() {
+  async obterDocumentos(): Promise<Documento[]> {
     const response = await this.scrapperInstance.get(
       `/edu/aluno/${this.matriculation}/`
     )
@@ -106,8 +107,8 @@ export class ScrapperWrapper {
       .map((el) => {
         const $el = $(el)
         return {
-          Nome: $el.text(),
-          Link: $el.attr("href")
+          nome: $el.text(),
+          link: $el.attr("href")
         }
       })
 

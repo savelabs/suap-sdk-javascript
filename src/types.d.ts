@@ -56,3 +56,13 @@ export type InformaçõesPessoais = {
     curriculo_lattes: string
   }
 }
+
+export type Documento = {
+  nome: string
+  link: string
+}
+
+export type DetalhesNota = {
+  Professores: string
+  "Detalhamento das Notas": { [key: string]: string }
+}
