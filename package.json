@@ -23,7 +23,7 @@
     "axios": "^0.25.0",
     "axios-cookiejar-support": "^2.0.3",
     "cheerio": "^1.0.0-rc.10",
-    "tough-cookie": "^4.0.0"
+    "tough-cookie": "github:colincasey/tough-cookie#bugfix/222_react_native_support"
   },
   "devDependencies": {
     "@commitlint/cli": "^16.1.0",
