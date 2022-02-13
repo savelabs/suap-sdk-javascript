@@ -66,3 +66,9 @@ export type DetalhesNota = {
   Professores: string
   "Detalhamento das Notas": { [key: string]: string }
 }
+
+export type Credenciais = {
+  matricula: string
+  api: string
+  site: string
+}

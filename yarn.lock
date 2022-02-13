@@ -1033,6 +1033,11 @@
   resolved "https://registry.yarnpkg.com/@types/stack-utils/-/stack-utils-2.0.1.tgz#20f18294f797f2209b5f65c8e3b5c8e8261d127c"
   integrity sha512-Hl219/BT5fLAaz6NDkSuhzasy49dwQS/DSdu4MdggFB8zcXv7vflBI3xp7FEmkmdDkBUI2bPUNeMttp2knYdxw==
 
+"@types/tough-cookie@^4.0.1":
+  version "4.0.1"
+  resolved "https://registry.npmjs.org/@types/tough-cookie/-/tough-cookie-4.0.1.tgz#8f80dd965ad81f3e1bc26d6f5c727e132721ff40"
+  integrity sha512-Y0K95ThC3esLEYD6ZuqNek29lNX2EM1qxV8y2FTLUB0ff5wWrk7az+mLrnNFUnaXcgKye22+sFBRXOgpPILZNg==
+
 "@types/yargs-parser@*":
   version "20.2.1"
   resolved "https://registry.yarnpkg.com/@types/yargs-parser/-/yargs-parser-20.2.1.tgz#3b9ce2489919d9e4fea439b76916abc34b2df129"
@@ -1176,7 +1181,7 @@ acorn@^8.4.1:
   resolved "https://registry.yarnpkg.com/acorn/-/acorn-8.7.0.tgz#90951fde0f8f09df93549481e5fc141445b791cf"
   integrity sha512-V/LGr1APy+PXIwKebEWrkZPwoeoF+w1jiOBUmuxuiUIaOHtob8Qc9BTrYo7VuI5fR8tqsy+buA2WFooR5olqvQ==
 
-agent-base@6:
+agent-base@6, agent-base@^6.0.2:
   version "6.0.2"
   resolved "https://registry.yarnpkg.com/agent-base/-/agent-base-6.0.2.tgz#49fff58577cfee3f37176feab4c22e00f86d7f77"
   integrity sha512-RZNwNclF7+MS/8bDg70amg32dyeZGZxiDuQmZxKLAlQjr3jGyLx+4Kkk58UO7D2QdgFIQCovuSuZESne6RG6XQ==
@@ -1336,6 +1341,13 @@ asynckit@^0.4.0:
   version "0.4.0"
   resolved "https://registry.yarnpkg.com/asynckit/-/asynckit-0.4.0.tgz#c79ed97f7f34cb8f2ba1bc9790bcc366474b4b79"
   integrity sha1-x57Zf380y48robyXkLzDZkdLS3k=
+
+axios-cookiejar-support@^2.0.3:
+  version "2.0.3"
+  resolved "https://registry.npmjs.org/axios-cookiejar-support/-/axios-cookiejar-support-2.0.3.tgz#54fc8911d16555a5d3cfd88ec68776ecbac7184a"
+  integrity sha512-tvMB+0JhxXLjjvePsXzqXhBI4DMlW4ImR4pKKNl+xclwF0IviNV+CkuhubQCCFjPzOXv7PIzOq3z7WFiF9pMpw==
+  dependencies:
+    http-cookie-agent "^1.0.2"
 
 axios@^0.25.0:
   version "0.25.0"
@@ -2776,6 +2788,13 @@ htmlparser2@^6.1.0:
     domhandler "^4.0.0"
     domutils "^2.5.2"
     entities "^2.0.0"
+
+http-cookie-agent@^1.0.2:
+  version "1.0.4"
+  resolved "https://registry.npmjs.org/http-cookie-agent/-/http-cookie-agent-1.0.4.tgz#5b18eb126c4a5f00160d3b4f264836489e9a0003"
+  integrity sha512-2gSYSE3m38/QMKPPbbS/6lEIm8OTbGA5sY3aBLtr/BUTNOFNeL4WqkdNQM6WmIBT7AWKC20aYfU3uq+cgR+Byg==
+  dependencies:
+    agent-base "^6.0.2"
 
 http-proxy-agent@^4.0.1:
   version "4.0.1"
@@ -4253,6 +4272,11 @@ q@^1.5.1:
   resolved "https://registry.yarnpkg.com/q/-/q-1.5.1.tgz#7e32f75b41381291d04611f1bf14109ac00651d7"
   integrity sha1-fjL3W0E4EpHQRhHxvxQQmsAGUdc=
 
+querystringify@^2.1.1:
+  version "2.2.0"
+  resolved "https://registry.npmjs.org/querystringify/-/querystringify-2.2.0.tgz#3345941b4153cb9d082d8eee4cda2016a9aef7f6"
+  integrity sha512-FIqgj2EUvTa7R50u0rGsyTftzjYmv/a3hO345bZNrqabNqjtgiDMgmo4mkUjd+nzU5oF3dClKqFIPUKybUyqoQ==
+
 queue-microtask@^1.2.2:
   version "1.2.3"
   resolved "https://registry.yarnpkg.com/queue-microtask/-/queue-microtask-1.2.3.tgz#4929228bbc724dfac43e0efb058caf7b6cfb6243"
@@ -4318,6 +4342,11 @@ require-from-string@^2.0.2:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/require-from-string/-/require-from-string-2.0.2.tgz#89a7fdd938261267318eafe14f9c32e598c36909"
   integrity sha512-Xf0nWe6RseziFMu+Ap9biiUbmplq6S9/p+7w7YXP/JBHhrUDDUhwa+vANyubuqfZWTveU//DYVGsDG7RKL/vEw==
+
+requires-port@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.npmjs.org/requires-port/-/requires-port-1.0.0.tgz#925d2601d39ac485e091cf0da5c6e694dc3dcaff"
+  integrity sha1-kl0mAdOaxIXgkc8NpcbmlNw9yv8=
 
 resolve-cwd@^3.0.0:
   version "3.0.0"
@@ -4833,14 +4862,14 @@ to-regex-range@^5.0.1:
   dependencies:
     is-number "^7.0.0"
 
-tough-cookie@^4.0.0:
+tough-cookie@^4.0.0, "tough-cookie@github:colincasey/tough-cookie#bugfix/222_react_native_support":
   version "4.0.0"
-  resolved "https://registry.yarnpkg.com/tough-cookie/-/tough-cookie-4.0.0.tgz#d822234eeca882f991f0f908824ad2622ddbece4"
-  integrity sha512-tHdtEpQCMrc1YLrMaqXXcj6AxhYi/xgit6mZu1+EDWUn+qhUf8wMQoFIy9NXuq23zAwtcB0t/MjACGR18pcRbg==
+  resolved "https://codeload.github.com/colincasey/tough-cookie/tar.gz/0ef85bb3b7342ad3fa9d4b953aad24cbe5b8ae86"
   dependencies:
     psl "^1.1.33"
     punycode "^2.1.1"
     universalify "^0.1.2"
+    url-parse "^1.5.3"
 
 tr46@^2.1.0:
   version "2.1.0"
@@ -5001,6 +5030,14 @@ uri-js@^4.2.2:
   integrity sha512-7rKUyy33Q1yc98pQ1DAmLtwX109F7TIfWlW1Ydo8Wl1ii1SeHieeh0HHfPeL2fMXK6z0s8ecKs9frCuLJvndBg==
   dependencies:
     punycode "^2.1.0"
+
+url-parse@^1.5.3:
+  version "1.5.6"
+  resolved "https://registry.npmjs.org/url-parse/-/url-parse-1.5.6.tgz#b2a41d5a233645f3c31204cc8be60e76a15230a2"
+  integrity sha512-xj3QdUJ1DttD1LeSfvJlU1eiF1RvBSBfUu8GplFGdUzSO28y5yUtEl7wb//PI4Af6qh0o/K8545vUmucRrfWsw==
+  dependencies:
+    querystringify "^2.1.1"
+    requires-port "^1.0.0"
 
 util-deprecate@^1.0.1:
   version "1.0.2"

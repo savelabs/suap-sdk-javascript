@@ -2,6 +2,7 @@ import { ApiWrapper } from "./apiWrapper"
 import { ScrapperWrapper } from "./scrapperWrapper"
 import {
   Boletim,
+  Credenciais,
   DetalhesNota,
   Documento,
   InformaçõesPessoais,
@@ -9,8 +10,31 @@ import {
 } from "./types"
 
 export class ClientSuap {
-  private readonly apiWrapper = new ApiWrapper()
-  private readonly scrapperWrapper = new ScrapperWrapper()
+  private readonly apiWrapper: ApiWrapper
+  private readonly scrapperWrapper: ScrapperWrapper
+
+  constructor()
+  constructor(credentials: Credenciais)
+  constructor(credentials?: Credenciais) {
+    if (credentials) {
+      this.apiWrapper = new ApiWrapper(credentials.api)
+      this.scrapperWrapper = new ScrapperWrapper(
+        credentials.site,
+        credentials.matricula
+      )
+    } else {
+      this.apiWrapper = new ApiWrapper()
+      this.scrapperWrapper = new ScrapperWrapper()
+    }
+  }
+
+  async obterCredenciais(): Promise<Credenciais> {
+    return {
+      matricula: this.scrapperWrapper.matriculation,
+      api: this.apiWrapper.token,
+      site: await this.scrapperWrapper.getCookies()
+    }
+  }
 
   async login(matriculation: string, password: string) {
     await this.apiWrapper.login(matriculation, password)

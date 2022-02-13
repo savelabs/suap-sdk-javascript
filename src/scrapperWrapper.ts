@@ -2,44 +2,62 @@ import axios from "axios"
 import cheerio from "cheerio"
 import { chunk, zipObject } from "./utils"
 import { DetalhesNota, Documento } from "./types"
+import { wrapper } from "axios-cookiejar-support"
+import { CookieJar } from "tough-cookie"
 
 export class ScrapperWrapper {
-  public scrapperInstance = axios.create({
-    baseURL: "https://suap.ifrn.edu.br",
-    withCredentials: true,
-    headers: {
-      Host: "suap.ifrn.edu.br",
-      Origin: "https://suap.ifrn.edu.br",
-      Referer: "https://suap.ifrn.edu.br/accounts/login/?next=",
-      "User-Agent": "Aplicativo Save"
-    }
-  })
+  private jar = new CookieJar()
+  public instance = wrapper(
+    axios.create({
+      baseURL: "https://suap.ifrn.edu.br",
+      headers: {
+        Host: "suap.ifrn.edu.br",
+        Origin: "https://suap.ifrn.edu.br",
+        Referer: "https://suap.ifrn.edu.br/accounts/login/?next=",
+        "User-Agent": "Aplicativo Save"
+      },
+      jar: this.jar
+    })
+  )
 
   public matriculation: string
+
+  constructor()
+  constructor(cookies: string, matriculation: string)
+  constructor(cookies?: string, matriculation?: string) {
+    if (cookies) {
+      this.jar.setCookie(cookies, "https://suap.ifrn.edu.br").then()
+      this.matriculation = matriculation
+    }
+  }
+
+  async getCookies() {
+    return await this.jar.getCookieString("https://suap.ifrn.edu.br")
+  }
 
   async login(matriculation: string, password: string) {
     this.matriculation = matriculation
 
-    const response = await this.scrapperInstance.get("/accounts/login/")
-    const cookies = response.headers["set-cookie"]
+    await this.instance.get("/accounts/login/")
 
-    await this.scrapperInstance.post(
+    const cookies = await this.getCookies()
+
+    await this.instance.post(
       "/accounts/login/",
       new URLSearchParams({
         username: matriculation,
         password,
         this_is_the_login_form: "1",
-        csrfmiddlewaretoken: cookies[0].split("csrftoken=")[1].split(";")[0]
-      }).toString(),
-      { headers: { Cookie: cookies.join("; ") } }
+        csrfmiddlewaretoken: cookies.split("csrftoken=")[1].split(";")[0]
+      }).toString()
     )
 
-    await this.scrapperInstance.get("/")
+    await this.instance.get("/")
   }
 
   async detalharNota(códigoDiário: string): Promise<DetalhesNota> {
-    let response = await this.scrapperInstance.get(
-      `/edu/aluno/${this.matriculation}/`
+    let response = await this.instance.get(
+      `/edu/aluno/${this.matriculation}/?tab=boletim`
     )
     let $ = cheerio.load(response.data)
 
@@ -47,7 +65,7 @@ export class ScrapperWrapper {
       "href"
     )
 
-    response = await this.scrapperInstance.get(href)
+    response = await this.instance.get(href)
 
     $ = cheerio.load(response.data)
 
@@ -85,7 +103,7 @@ export class ScrapperWrapper {
   }
 
   async obterDocumentos(): Promise<Documento[]> {
-    const response = await this.scrapperInstance.get(
+    const response = await this.instance.get(
       `/edu/aluno/${this.matriculation}/`
     )
 

@@ -10,6 +10,13 @@ export class ApiWrapper {
     }
   })
 
+  constructor(token: string = "") {
+    if (token) {
+      this.token = token
+      this.instance.defaults.headers.common.Authorization = `JWT ${token}`
+    }
+  }
+
   async login(matriculation: string, password: string) {
     const response = await this.instance.post(
       "/autenticacao/token/?format=json",
