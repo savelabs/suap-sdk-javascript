@@ -1,25 +1,27 @@
 import axios from "axios"
-import { wrapper } from "axios-cookiejar-support"
-import { CookieJar } from "tough-cookie"
 import cheerio from "cheerio"
 import { chunk, zipObject } from "./utils"
 import { DetalhesNota, Documento } from "./types"
 
 export class ScrapperWrapper {
-  private jar = new CookieJar()
-  public scrapperInstance = wrapper(
-    axios.create({ baseURL: "https://suap.ifrn.edu.br", jar: this.jar })
-  )
+  public scrapperInstance = axios.create({
+    baseURL: "https://suap.ifrn.edu.br",
+    withCredentials: true,
+    headers: {
+      Host: "suap.ifrn.edu.br",
+      Origin: "https://suap.ifrn.edu.br",
+      Referer: "https://suap.ifrn.edu.br/accounts/login/?next=",
+      "User-Agent": "Aplicativo Save"
+    }
+  })
 
   public matriculation: string
 
   async login(matriculation: string, password: string) {
     this.matriculation = matriculation
 
-    await this.scrapperInstance.get("/")
-    const cookieString = await this.jar.getCookieString(
-      "https://suap.ifrn.edu.br"
-    )
+    const response = await this.scrapperInstance.get("/accounts/login/")
+    const cookies = response.headers["set-cookie"]
 
     await this.scrapperInstance.post(
       "/accounts/login/",
@@ -27,23 +29,12 @@ export class ScrapperWrapper {
         username: matriculation,
         password,
         this_is_the_login_form: "1",
-        csrfmiddlewaretoken: cookieString.split("csrftoken=")[1].split(";")[0]
+        csrfmiddlewaretoken: cookies[0].split("csrftoken=")[1].split(";")[0]
       }).toString(),
-      {
-        headers: {
-          Host: "suap.ifrn.edu.br",
-          Origin: "https://suap.ifrn.edu.br",
-          Referer: "https://suap.ifrn.edu.br/accounts/login/?next=",
-          "User-Agent": "Aplicativo Save"
-        }
-      }
+      { headers: { Cookie: cookies.join("; ") } }
     )
 
     await this.scrapperInstance.get("/")
-  }
-
-  get credentials() {
-    return this.jar.getCookieStringSync("https://suap.ifrn.edu.br")
   }
 
   async detalharNota(códigoDiário: string): Promise<DetalhesNota> {

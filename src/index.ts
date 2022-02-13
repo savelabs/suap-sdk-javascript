@@ -13,19 +13,8 @@ export class ClientSuap {
   private readonly scrapperWrapper = new ScrapperWrapper()
 
   async login(matriculation: string, password: string) {
-    try {
-      await this.apiWrapper.login(matriculation, password)
-      await this.scrapperWrapper.login(matriculation, password)
-    } catch (error) {
-      throw new Error("Matricula ou senha inválidos")
-    }
-  }
-
-  get credentials() {
-    return {
-      api: this.apiWrapper.token,
-      scrapper: this.scrapperWrapper.credentials
-    }
+    await this.apiWrapper.login(matriculation, password)
+    await this.scrapperWrapper.login(matriculation, password)
   }
 
   async obterInformaçõesPessoais(): Promise<InformaçõesPessoais> {
