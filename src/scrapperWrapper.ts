@@ -10,6 +10,7 @@ export class ScrapperWrapper {
   public instance = wrapper(
     axios.create({
       baseURL: "https://suap.ifrn.edu.br",
+      withCredentials: true,
       headers: {
         Host: "suap.ifrn.edu.br",
         Origin: "https://suap.ifrn.edu.br",
@@ -20,14 +21,14 @@ export class ScrapperWrapper {
     })
   )
 
-  public matriculation: string
+  public matrícula: string | null = null
 
   constructor()
-  constructor(cookies: string, matriculation: string)
-  constructor(cookies?: string, matriculation?: string) {
+  constructor(cookies: string, matrícula: string)
+  constructor(cookies?: string, matrícula?: string) {
     if (cookies) {
       this.jar.setCookie(cookies, "https://suap.ifrn.edu.br").then()
-      this.matriculation = matriculation
+      this.matrícula = matrícula
     }
   }
 
@@ -35,8 +36,8 @@ export class ScrapperWrapper {
     return await this.jar.getCookieString("https://suap.ifrn.edu.br")
   }
 
-  async login(matriculation: string, password: string) {
-    this.matriculation = matriculation
+  async login(matrícula: string, password: string) {
+    this.matrícula = matrícula
 
     await this.instance.get("/accounts/login/")
 
@@ -45,7 +46,7 @@ export class ScrapperWrapper {
     await this.instance.post(
       "/accounts/login/",
       new URLSearchParams({
-        username: matriculation,
+        username: matrícula,
         password,
         this_is_the_login_form: "1",
         csrfmiddlewaretoken: cookies.split("csrftoken=")[1].split(";")[0]
@@ -57,7 +58,7 @@ export class ScrapperWrapper {
 
   async detalharNota(códigoDiário: string): Promise<DetalhesNota> {
     let response = await this.instance.get(
-      `/edu/aluno/${this.matriculation}/?tab=boletim`
+      `/edu/aluno/${this.matrícula}/?tab=boletim`
     )
     let $ = cheerio.load(response.data)
 
@@ -103,9 +104,7 @@ export class ScrapperWrapper {
   }
 
   async obterDocumentos(): Promise<Documento[]> {
-    const response = await this.instance.get(
-      `/edu/aluno/${this.matriculation}/`
-    )
+    const response = await this.instance.get(`/edu/aluno/${this.matrícula}/`)
 
     const $ = cheerio.load(response.data)
 

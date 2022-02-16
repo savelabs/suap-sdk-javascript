@@ -70,5 +70,10 @@ export type DetalhesNota = {
 export type Credenciais = {
   matricula: string
   api: string
-  site: string
+  site?: string
+}
+
+export type ClienteSuapArgs = {
+  credenciais?: Credenciais
+  usarApenasApi?: boolean
 }
