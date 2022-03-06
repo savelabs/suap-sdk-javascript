@@ -1,64 +1,54 @@
 import axios from "axios"
+import { wrapper } from "axios-cookiejar-support"
+import { CookieJar } from "tough-cookie"
 import cheerio from "cheerio"
 import { chunk, zipObject } from "./utils"
 import { DetalhesNota, Documento } from "./types"
-import { wrapper } from "axios-cookiejar-support"
-import { CookieJar } from "tough-cookie"
 
 export class ScrapperWrapper {
   private jar = new CookieJar()
-  public instance = wrapper(
-    axios.create({
-      baseURL: "https://suap.ifrn.edu.br",
-      withCredentials: true,
-      headers: {
-        Host: "suap.ifrn.edu.br",
-        Origin: "https://suap.ifrn.edu.br",
-        Referer: "https://suap.ifrn.edu.br/accounts/login/?next=",
-        "User-Agent": "Aplicativo Save"
-      },
-      jar: this.jar
-    })
+  public scrapperInstance = wrapper(
+    axios.create({ baseURL: "https://suap.ifrn.edu.br", jar: this.jar })
   )
 
-  public matrícula: string | null = null
+  public matriculation: string
 
-  constructor()
-  constructor(cookies: string, matrícula: string)
-  constructor(cookies?: string, matrícula?: string) {
-    if (cookies) {
-      this.jar.setCookie(cookies, "https://suap.ifrn.edu.br").then()
-      this.matrícula = matrícula
-    }
-  }
+  async login(matriculation: string, password: string) {
+    this.matriculation = matriculation
 
-  async getCookies() {
-    return await this.jar.getCookieString("https://suap.ifrn.edu.br")
-  }
-
-  async login(matrícula: string, password: string) {
-    this.matrícula = matrícula
-
-    await this.instance.get("/accounts/login/")
-
-    const cookies = await this.getCookies()
-
-    await this.instance.post(
-      "/accounts/login/",
-      new URLSearchParams({
-        username: matrícula,
-        password,
-        this_is_the_login_form: "1",
-        csrfmiddlewaretoken: cookies.split("csrftoken=")[1].split(";")[0]
-      }).toString()
+    await this.scrapperInstance.get("/")
+    const cookieString = await this.jar.getCookieString(
+      "https://suap.ifrn.edu.br"
     )
 
-    await this.instance.get("/")
+    await this.scrapperInstance.post(
+      "/accounts/login/",
+      new URLSearchParams({
+        username: matriculation,
+        password,
+        this_is_the_login_form: "1",
+        csrfmiddlewaretoken: cookieString.split("csrftoken=")[1].split(";")[0]
+      }).toString(),
+      {
+        headers: {
+          Host: "suap.ifrn.edu.br",
+          Origin: "https://suap.ifrn.edu.br",
+          Referer: "https://suap.ifrn.edu.br/accounts/login/?next=",
+          "User-Agent": "Aplicativo Save"
+        }
+      }
+    )
+
+    await this.scrapperInstance.get("/")
+  }
+
+  get credentials() {
+    return this.jar.getCookieStringSync("https://suap.ifrn.edu.br")
   }
 
   async detalharNota(códigoDiário: string): Promise<DetalhesNota> {
-    let response = await this.instance.get(
-      `/edu/aluno/${this.matrícula}/?tab=boletim`
+    let response = await this.scrapperInstance.get(
+      `/edu/aluno/${this.matriculation}/`
     )
     let $ = cheerio.load(response.data)
 
@@ -66,7 +56,7 @@ export class ScrapperWrapper {
       "href"
     )
 
-    response = await this.instance.get(href)
+    response = await this.scrapperInstance.get(href)
 
     $ = cheerio.load(response.data)
 
@@ -104,7 +94,9 @@ export class ScrapperWrapper {
   }
 
   async obterDocumentos(): Promise<Documento[]> {
-    const response = await this.instance.get(`/edu/aluno/${this.matrícula}/`)
+    const response = await this.scrapperInstance.get(
+      `/edu/aluno/${this.matriculation}/`
+    )
 
     const $ = cheerio.load(response.data)
 
