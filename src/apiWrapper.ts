@@ -1,5 +1,5 @@
 import axios from "axios"
-import { Boletim, PeríodoLetivo } from "./types"
+import { Boletim, InformaçõesTurmaVirtual, PeríodoLetivo, TurmaVirtual } from "./types"
 
 export class ApiWrapper {
   public token = ""
@@ -47,6 +47,27 @@ export class ApiWrapper {
   ): Promise<Boletim[]> {
     const response = await this.instance.get(
       `/minhas-informacoes/boletim/${anoLetivo}/${períodoLetivo}/`
+    )
+
+    return response.data
+  }
+
+  async obterTurmasVirtuais(
+    anoLetivo: number,
+    períodoLetivo: number
+  ): Promise<TurmaVirtual[]> {
+    const response = await this.instance.get(
+      `/minhas-informacoes/turmas-virtuais/${anoLetivo}/${períodoLetivo}/`
+    )
+
+    return response.data
+  }
+
+  async obterInformaçõesTurmaVirtual(
+    códigoDiário: string
+  ): Promise<InformaçõesTurmaVirtual> {
+    const response = await this.instance.get(
+      `/minhas-informacoes/turma-virtual/${códigoDiário}/`
     )
 
     return response.data

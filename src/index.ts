@@ -92,4 +92,17 @@ export class ClienteSuap {
       return await this.scrapperWrapper.obterDocumentos()
     }
   }
+
+  async obterTurmasVirtuais(
+    anoLetivo: number,
+    períodoLetivo: number
+  ): Promise<TurmaVirtual[]> {
+    return await this.apiWrapper.obterTurmasVirtuais(anoLetivo, períodoLetivo)
+  }
+
+  async obterDetalhesTurmaVirtual(
+    códigoDiário: string
+  ): Promise<InformaçõesTurmaVirtual> {
+    return await this.apiWrapper.obterInformaçõesTurmaVirtual(códigoDiário)
+  }
 }
