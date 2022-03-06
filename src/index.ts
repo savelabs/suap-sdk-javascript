@@ -7,7 +7,9 @@ import {
   Documento,
   InformaçõesPessoais,
   PeríodoLetivo,
-  ClienteSuapArgs
+  ClienteSuapArgs,
+  InformaçõesTurmaVirtual,
+  TurmaVirtual
 } from "./types"
 
 export class ClienteSuap {

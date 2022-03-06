@@ -122,4 +122,3 @@ export type InformaçõesTurmaVirtual = {
   aulas: Aulas[]
   materiais_de_aula: MaterialDeAula[]
 }
-
