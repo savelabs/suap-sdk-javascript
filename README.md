@@ -17,9 +17,9 @@ npm install suap-sdk-javascript
 ### Fazer login
 
 ```typescript
-import { ClientSuap } from "suap-sdk-javascript"
+import { ClienteSuap } from "suap-sdk-javascript"
 
-const cliente = new ClientSuap()
+const cliente = new ClienteSuap()
 
 await cliente.login("<matricula>", "<senha>")
 ```
