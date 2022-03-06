@@ -108,3 +108,5 @@ export class ClienteSuap {
     return await this.apiWrapper.obterInformaçõesTurmaVirtual(códigoDiário)
   }
 }
+
+export * from "./types"
