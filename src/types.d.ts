@@ -67,13 +67,47 @@ export type DetalhesNota = {
   "Detalhamento das Notas": { [key: string]: string }
 }
 
-export type Credenciais = {
-  matricula: string
-  api: string
-  site?: string
+export type TurmaVirtual = {
+  id: number
+  sigla: string
+  descricao: string
+  observacao: string
+  locais_de_aula: Array<string>
+  horarios_de_aula: string
 }
 
-export type ClienteSuapArgs = {
-  credenciais?: Credenciais
-  usarApenasApi?: boolean
+export type UsuárioTurmaVirtual = {
+  foto: string
+  nome: string
+  matricula: string
+  email: string
+}
+
+export type Aulas = {
+  data: string
+  etapa: number
+  quantidade: number
+  faltas: number
+  professor: string
+  conteudo: string
+}
+
+export type MaterialDeAula = {
+  url: string
+  descricao: string
+  data_vinculacao: string
+}
+
+export type InformaçõesTurmaVirtual = {
+  id: number
+  ano_letivo: string
+  periodo_letivo: string
+  componente_curricular: string
+  professores: UsuárioTurmaVirtual[]
+  locais_de_aula: Array<string>
+  data_inicio: string
+  data_fim: string
+  participantes: UsuárioTurmaVirtual[]
+  aulas: Aulas[]
+  materiais_de_aula: MaterialDeAula[]
 }
