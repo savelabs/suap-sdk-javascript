@@ -1,5 +1,10 @@
 import axios from "axios"
-import { Boletim, InformaçõesTurmaVirtual, PeríodoLetivo, TurmaVirtual } from "./types"
+import {
+  Boletim,
+  InformaçõesTurmaVirtual,
+  PeríodoLetivo,
+  TurmaVirtual
+} from "./types"
 
 export class ApiWrapper {
   public token = ""

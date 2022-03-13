@@ -1,5 +1,5 @@
 import axios from "axios"
-import cheerio from "cheerio"
+import { load } from "cheerio"
 import { chunk, zipObject } from "./utils"
 import { DetalhesNota, Documento } from "./types"
 import { wrapper } from "axios-cookiejar-support"
@@ -60,7 +60,7 @@ export class ScrapperWrapper {
     let response = await this.instance.get(
       `/edu/aluno/${this.matrícula}/?tab=boletim`
     )
-    let $ = cheerio.load(response.data)
+    let $ = load(response.data)
 
     const href = $(`tr:has(> td:contains("${códigoDiário}")) > td > a`).attr(
       "href"
@@ -68,7 +68,7 @@ export class ScrapperWrapper {
 
     response = await this.instance.get(href)
 
-    $ = cheerio.load(response.data)
+    $ = load(response.data)
 
     const teachers = $("#content > div:nth-child(3) > div").text()
 
@@ -106,7 +106,7 @@ export class ScrapperWrapper {
   async obterDocumentos(): Promise<Documento[]> {
     const response = await this.instance.get(`/edu/aluno/${this.matrícula}/`)
 
-    const $ = cheerio.load(response.data)
+    const $ = load(response.data)
 
     const documents = $(
       "#content > div.title-container > div.action-bar-container > ul > li:nth-child(2) > ul > li > a"

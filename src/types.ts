@@ -62,9 +62,17 @@ export type Documento = {
   link: string
 }
 
+export type Etapa = {
+  Sigla: string
+  Tipo: string
+  Descrição: string
+  Peso: string
+  "Nota Obtida": string
+}
+
 export type DetalhesNota = {
   Professores: string
-  "Detalhamento das Notas": { [key: string]: string }
+  "Detalhamento das Notas": { [key: string]: Etapa[] }
 }
 
 export type Credenciais = {
