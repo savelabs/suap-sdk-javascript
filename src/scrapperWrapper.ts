@@ -56,6 +56,18 @@ export class ScrapperWrapper {
     await this.instance.get("/")
   }
 
+  async obterInformações() {
+    const response = await this.instance.get("/")
+
+    const $ = load(response.data)
+    $("div.box").each((i, el) => {
+      const $el = $(el)
+      const title = $el.find("h3").text()
+      const data = $el.find("p").text()
+      console.log(title, data)
+    })
+  }
+
   async detalharNota(códigoDiário: string): Promise<DetalhesNota> {
     let response = await this.instance.get(
       `/edu/aluno/${this.matrícula}/?tab=boletim`
