@@ -34,7 +34,7 @@ export class ApiWrapper {
     this.instance.defaults.headers.common.Authorization = `JWT ${this.token}`
   }
 
-  async revokeToken() {
+  async renovarToken() {
     const response = await this.instance.post("/autenticacao/token/refresh/", {
       token: this.token
     })
