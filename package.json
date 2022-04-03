@@ -1,5 +1,5 @@
 {
-  "name": "suap-sdk-javascript",
+  "name": "suap-sdk",
   "version": "1.3.5",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",

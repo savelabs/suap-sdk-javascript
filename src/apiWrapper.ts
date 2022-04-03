@@ -39,6 +39,7 @@ export class ApiWrapper {
       token: this.token
     })
     this.token = response.data.token
+    return this.token
   }
 
   async obterInformações() {

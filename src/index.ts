@@ -108,8 +108,8 @@ export class ClienteSuap {
     return await this.apiWrapper.obterInformaçõesTurmaVirtual(códigoDiário)
   }
 
-  async renovarToken(): Promise<void> {
-    await this.apiWrapper.renovarToken()
+  async renovarToken(): Promise<string> {
+    return await this.apiWrapper.renovarToken()
   }
 }
 

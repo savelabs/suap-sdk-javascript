@@ -9,7 +9,7 @@ Esse SDK fornece uma interface para acessar os recursos da SUAP (alguns até mes
 ## Instalação
 
 ```bash
-npm install suap-sdk-javascript
+npm install suap-sdk
 ```
 
 ## Como usar
@@ -17,7 +17,7 @@ npm install suap-sdk-javascript
 ### Fazer login
 
 ```typescript
-import { ClienteSuap } from "suap-sdk-javascript"
+import { ClienteSuap } from "suap-sdk"
 
 const cliente = new ClienteSuap()
 
