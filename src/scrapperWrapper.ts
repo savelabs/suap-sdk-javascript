@@ -6,44 +6,50 @@ import { wrapper } from "axios-cookiejar-support"
 import { CookieJar } from "tough-cookie"
 
 export class ScrapperWrapper {
-  private jar = new CookieJar()
-  public instance = wrapper(
-    axios.create({
-      baseURL: "https://suap.ifrn.edu.br",
-      withCredentials: true,
-      headers: {
-        Host: "suap.ifrn.edu.br",
-        Origin: "https://suap.ifrn.edu.br",
-        Referer: "https://suap.ifrn.edu.br/accounts/login/?next=",
-        "User-Agent": "Aplicativo Save"
-      },
-      jar: this.jar
-    })
-  )
+  public instance = axios.create({
+    baseURL: "https://suap.ifrn.edu.br",
+    withCredentials: true,
+    headers: {
+      Host: "suap.ifrn.edu.br",
+      Origin: "https://suap.ifrn.edu.br",
+      Referer: "https://suap.ifrn.edu.br/accounts/login/?next=",
+      "User-Agent": "Aplicativo Save"
+    }
+  })
+
+  public cookies: string
 
   public matrícula: string | null = null
 
-  constructor()
-  constructor(cookies: string, matrícula: string)
-  constructor(cookies?: string, matrícula?: string) {
-    if (cookies) {
-      this.jar.setCookie(cookies, "https://suap.ifrn.edu.br").then()
-      this.matrícula = matrícula
-    }
-  }
-
-  async getCookies() {
-    return await this.jar.getCookieString("https://suap.ifrn.edu.br")
+  async loginWithCookies(matrícula: string, cookies: string) {
+    this.matrícula = matrícula
+    this.cookies = cookies
+    this.instance.defaults.headers.common.Cookie = cookies
   }
 
   async login(matrícula: string, password: string) {
     this.matrícula = matrícula
 
-    await this.instance.get("/accounts/login/")
+    const jar = new CookieJar()
 
-    const cookies = await this.getCookies()
+    const instance = wrapper(
+      axios.create({
+        baseURL: "https://suap.ifrn.edu.br",
+        headers: {
+          Host: "suap.ifrn.edu.br",
+          Origin: "https://suap.ifrn.edu.br",
+          Referer: "https://suap.ifrn.edu.br/accounts/login/?next=",
+          "User-Agent": "Aplicativo Save"
+        },
+        jar
+      })
+    )
 
-    await this.instance.post(
+    await instance.get("/accounts/login/")
+
+    const cookies = await jar.getCookieString("https://suap.ifrn.edu.br")
+
+    await instance.post(
       "/accounts/login/",
       new URLSearchParams({
         username: matrícula,
@@ -53,7 +59,10 @@ export class ScrapperWrapper {
       }).toString()
     )
 
-    await this.instance.get("/")
+    await instance.get("/")
+
+    this.cookies = await jar.getCookieString("https://suap.ifrn.edu.br")
+    this.instance.defaults.headers.common.Cookie = this.cookies
   }
 
   async obterInformações() {
@@ -116,7 +125,12 @@ export class ScrapperWrapper {
   }
 
   async obterDocumentos(): Promise<Documento[]> {
-    const response = await this.instance.get(`/edu/aluno/${this.matrícula}/`)
+    const response = await this.instance.get(`/edu/aluno/${this.matrícula}/`, {
+      headers: {
+        Cookie:
+          "__Host-csrftoken=UCM5q0tVY3LA7V2cqw7NXL1vxW5v3PZOMWQKGTyzzjc3qsauWnaSpPlMbjgwbeBx; __Host-sessionid=9caqzgznnqubl6ctpeif24aoz8lsl9pt; __Host-suap-control=eyJ1c2VybmFtZXMiOlsiMjAyMTExNDQwMTAwNDQiXSwiZGF0ZXRpbWUiOiIyMDIyLTA3LTI5VDE1OjQ4OjQ3LjI4MjYxOSJ9:1nks99:TSF_iG5UeF5moAFsSoEWSnKwiW8Penh0dvD_I_uAhKs"
+      }
+    })
 
     const $ = load(response.data)
 

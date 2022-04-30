@@ -21,24 +21,11 @@ export class ClienteSuap {
 
   constructor()
   constructor(args: ClienteSuapArgs)
-  constructor(
-    args: ClienteSuapArgs = { credenciais: null, usarApenasApi: false }
-  ) {
-    this.usarApenasApi = args.usarApenasApi
+  constructor() {
+    this.apiWrapper = new ApiWrapper()
 
-    if (args.credenciais) {
-      this.apiWrapper = new ApiWrapper(args.credenciais.api)
-      if (!this.usarApenasApi) {
-        this.scrapperWrapper = new ScrapperWrapper(
-          args.credenciais.site,
-          args.credenciais.matricula
-        )
-      }
-    } else {
-      this.apiWrapper = new ApiWrapper()
-      if (!this.usarApenasApi) {
-        this.scrapperWrapper = new ScrapperWrapper()
-      }
+    if (!this.usarApenasApi) {
+      this.scrapperWrapper = new ScrapperWrapper()
     }
   }
 
@@ -50,10 +37,21 @@ export class ClienteSuap {
     }
 
     if (!this.usarApenasApi) {
-      result.site = await this.scrapperWrapper.getCookies()
+      result.site = this.scrapperWrapper.cookies
     }
 
     return result
+  }
+
+  async loginWithCredentials(credenciais: Credenciais) {
+    this.matrícula = credenciais.matricula
+    this.apiWrapper.loginWithToken(credenciais.api)
+    if (!this.usarApenasApi) {
+      await this.scrapperWrapper.loginWithCookies(
+        this.matrícula,
+        credenciais.site
+      )
+    }
   }
 
   async login(matrícula: string, password: string) {
