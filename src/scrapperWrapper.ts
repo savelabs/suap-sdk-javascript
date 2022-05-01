@@ -125,12 +125,7 @@ export class ScrapperWrapper {
   }
 
   async obterDocumentos(): Promise<Documento[]> {
-    const response = await this.instance.get(`/edu/aluno/${this.matrícula}/`, {
-      headers: {
-        Cookie:
-          "__Host-csrftoken=UCM5q0tVY3LA7V2cqw7NXL1vxW5v3PZOMWQKGTyzzjc3qsauWnaSpPlMbjgwbeBx; __Host-sessionid=9caqzgznnqubl6ctpeif24aoz8lsl9pt; __Host-suap-control=eyJ1c2VybmFtZXMiOlsiMjAyMTExNDQwMTAwNDQiXSwiZGF0ZXRpbWUiOiIyMDIyLTA3LTI5VDE1OjQ4OjQ3LjI4MjYxOSJ9:1nks99:TSF_iG5UeF5moAFsSoEWSnKwiW8Penh0dvD_I_uAhKs"
-      }
-    })
+    const response = await this.instance.get(`/edu/aluno/${this.matrícula}/`)
 
     const $ = load(response.data)
 
