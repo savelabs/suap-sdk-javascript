@@ -77,11 +77,19 @@ export class ClienteSuap {
     return await this.apiWrapper.obterNotas(anoLetivo, períodoLetivo)
   }
 
-  async detalharNota(códigoDiário: string): Promise<DetalhesNota> {
+  async detalharNota(
+    códigoDiário: string,
+    anoLetivo: number,
+    períodoLetivo: number
+  ): Promise<DetalhesNota> {
     if (this.usarApenasApi) {
       throw new Error("Não é possível obter detalhes de notas apenas da API")
     } else {
-      return await this.scrapperWrapper.detalharNota(códigoDiário)
+      return await this.scrapperWrapper.detalharNota(
+        códigoDiário,
+        anoLetivo,
+        períodoLetivo
+      )
     }
   }
 

@@ -77,9 +77,13 @@ export class ScrapperWrapper {
     })
   }
 
-  async detalharNota(códigoDiário: string): Promise<DetalhesNota> {
+  async detalharNota(
+    códigoDiário: string,
+    anoLetivo: number,
+    períodoLetivo: number
+  ): Promise<DetalhesNota> {
     let response = await this.instance.get(
-      `/edu/aluno/${this.matrícula}/?tab=boletim`
+      `/edu/aluno/${this.matrícula}/?tab=boletim&ano_periodo=${anoLetivo}_${períodoLetivo}`
     )
     let $ = load(response.data)
 
