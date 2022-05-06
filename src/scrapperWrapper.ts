@@ -147,4 +147,12 @@ export class ScrapperWrapper {
 
     return documents
   }
+
+  async baixarDocumento(link: string): Promise<Buffer> {
+    const { data } = await this.instance.get(link, {
+      responseType: "arraybuffer"
+    })
+
+    return data
+  }
 }

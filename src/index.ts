@@ -117,6 +117,14 @@ export class ClienteSuap {
   async renovarToken(): Promise<string> {
     return await this.apiWrapper.renovarToken()
   }
+
+  async baixarDocumento(link: string): Promise<Buffer> {
+    if (this.usarApenasApi) {
+      throw new Error("Não é possível baixar documentos apenas da API")
+    } else {
+      return await this.scrapperWrapper.baixarDocumento(link)
+    }
+  }
 }
 
 export * from "./types"
