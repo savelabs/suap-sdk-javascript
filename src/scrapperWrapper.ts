@@ -155,4 +155,12 @@ export class ScrapperWrapper {
 
     return data
   }
+
+  async baixarDocumentoStream(link: string) {
+    const { data } = await this.instance.get(link, {
+      responseType: "stream"
+    })
+
+    return data
+  }
 }
