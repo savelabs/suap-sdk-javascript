@@ -125,6 +125,14 @@ export class ClienteSuap {
       return await this.scrapperWrapper.baixarDocumento(link)
     }
   }
+
+  async baixarDocumentoStream(link: string): Promise<Buffer> {
+    if (this.usarApenasApi) {
+      throw new Error("Não é possível baixar documentos apenas da API")
+    } else {
+      return await this.scrapperWrapper.baixarDocumentoStream(link)
+    }
+  }
 }
 
 export * from "./types"
