@@ -14,6 +14,16 @@ npm install suap-sdk
 
 ## Como usar
 
+### Fora do IFRN
+
+Se você utilizar uma intância do SUAP diferente de "https://suap.ifrn.edu.br", você precisa defini-la.
+
+```typescript
+import { ClienteSuap } from "suap-sdk"
+
+const cliente = new ClienteSuap({ urlBase: "https://suap.ifbaiano.edu.br" }) // exemplo
+```
+
 ### Fazer login
 
 ```typescript
