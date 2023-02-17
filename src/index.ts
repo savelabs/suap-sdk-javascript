@@ -16,16 +16,17 @@ export class ClienteSuap {
   private readonly apiWrapper: ApiWrapper
   private readonly scrapperWrapper: ScrapperWrapper
   public matrícula: string | null = null
+  public urlBase = ""
 
   private usarApenasApi = false
 
-  constructor()
-  constructor(args: ClienteSuapArgs)
-  constructor() {
-    this.apiWrapper = new ApiWrapper()
+  constructor({ usarApenasApi, urlBase }: ClienteSuapArgs = {}) {
+    this.usarApenasApi = usarApenasApi ?? false
+    this.urlBase = urlBase ?? ""
+    this.apiWrapper = new ApiWrapper(this.urlBase)
 
     if (!this.usarApenasApi) {
-      this.scrapperWrapper = new ScrapperWrapper()
+      this.scrapperWrapper = new ScrapperWrapper(this.urlBase)
     }
   }
 

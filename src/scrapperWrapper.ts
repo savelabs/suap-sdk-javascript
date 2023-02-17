@@ -1,4 +1,4 @@
-import axios from "axios"
+import axios, { AxiosInstance } from "axios"
 import { load } from "cheerio"
 import { chunk, zipObject } from "./utils"
 import { DetalhesNota, Documento } from "./types"
@@ -6,20 +6,27 @@ import { wrapper } from "axios-cookiejar-support"
 import { CookieJar } from "tough-cookie"
 
 export class ScrapperWrapper {
-  public instance = axios.create({
-    baseURL: "https://suap.ifrn.edu.br",
-    withCredentials: true,
-    headers: {
-      Host: "suap.ifrn.edu.br",
-      Origin: "https://suap.ifrn.edu.br",
-      Referer: "https://suap.ifrn.edu.br/accounts/login/?next=",
-      "User-Agent": "Aplicativo Save"
-    }
-  })
+  public instance: AxiosInstance
+  public urlBase: string
 
   public cookies: string
 
   public matrícula: string | null = null
+
+  constructor(urlBase: string) {
+    this.urlBase = urlBase
+
+    this.instance = axios.create({
+      baseURL: this.urlBase,
+      withCredentials: true,
+      headers: {
+        Host: this.urlBase,
+        Origin: this.urlBase,
+        Referer: `${this.urlBase}/accounts/login/?next=`,
+        "User-Agent": "suap-sdk-javascript"
+      }
+    })
+  }
 
   async loginWithCookies(matrícula: string, cookies: string) {
     this.matrícula = matrícula
@@ -36,10 +43,10 @@ export class ScrapperWrapper {
       axios.create({
         baseURL: "https://suap.ifrn.edu.br",
         headers: {
-          Host: "suap.ifrn.edu.br",
-          Origin: "https://suap.ifrn.edu.br",
-          Referer: "https://suap.ifrn.edu.br/accounts/login/?next=",
-          "User-Agent": "Aplicativo Save"
+          Host: this.urlBase,
+          Origin: this.urlBase,
+          Referer: `${this.urlBase}/accounts/login/?next=`,
+          "User-Agent": "suap-sdk-javascript"
         },
         jar
       })
@@ -47,7 +54,7 @@ export class ScrapperWrapper {
 
     await instance.get("/accounts/login/")
 
-    const cookies = await jar.getCookieString("https://suap.ifrn.edu.br")
+    const cookies = await jar.getCookieString(this.urlBase)
 
     await instance.post(
       "/accounts/login/",
@@ -61,7 +68,7 @@ export class ScrapperWrapper {
 
     await instance.get("/")
 
-    this.cookies = await jar.getCookieString("https://suap.ifrn.edu.br")
+    this.cookies = await jar.getCookieString(this.urlBase)
     this.instance.defaults.headers.common.Cookie = this.cookies
   }
 

@@ -1,4 +1,4 @@
-import axios from "axios"
+import axios, { AxiosInstance } from "axios"
 import {
   Boletim,
   InformaçõesTurmaVirtual,
@@ -8,18 +8,18 @@ import {
 
 export class ApiWrapper {
   public token = ""
-  public instance = axios.create({
-    baseURL: "https://suap.ifrn.edu.br/api/v2",
-    headers: {
-      "Content-Type": "application/json"
-    }
-  })
+  public instance: AxiosInstance
+  public urlBase = ""
 
-  constructor(token: string = "") {
-    if (token) {
-      this.token = token
-      this.instance.defaults.headers.common.Authorization = `JWT ${token}`
-    }
+  constructor(urlBase: string) {
+    this.urlBase = urlBase
+
+    this.instance = axios.create({
+      baseURL: `${this.urlBase}/api/v2`,
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
   }
 
   loginWithToken(token: string) {

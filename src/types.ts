@@ -82,8 +82,8 @@ export type Credenciais = {
 }
 
 export type ClienteSuapArgs = {
-  credenciais?: Credenciais
   usarApenasApi?: boolean
+  urlBase?: string
 }
 
 export type TurmaVirtual = {
