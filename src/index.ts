@@ -22,7 +22,7 @@ export class ClienteSuap {
 
   constructor({ usarApenasApi, urlBase }: ClienteSuapArgs = {}) {
     this.usarApenasApi = usarApenasApi ?? false
-    this.urlBase = urlBase ?? ""
+    this.urlBase = urlBase ?? "https://suap.ifrn.edu.br"
     this.apiWrapper = new ApiWrapper(this.urlBase)
 
     if (!this.usarApenasApi) {

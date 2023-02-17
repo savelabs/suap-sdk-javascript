@@ -8,6 +8,7 @@ import {
 
 export class ApiWrapper {
   public token = ""
+  public refreshToken = ""
   public instance: AxiosInstance
   public urlBase = ""
 
@@ -20,11 +21,22 @@ export class ApiWrapper {
         "Content-Type": "application/json"
       }
     })
+
+    this.instance.interceptors.response.use(
+      (response) => response,
+      async (error) => {
+        if (error.response.status === 401) {
+          await this.renovarToken()
+          return this.instance.request(error.config)
+        }
+        return Promise.reject(error)
+      }
+    )
   }
 
   loginWithToken(token: string) {
     this.token = token
-    this.instance.defaults.headers.common.Authorization = `JWT ${token}`
+    this.instance.defaults.headers.common.Authorization = `Bearer ${token}`
   }
 
   async login(matriculation: string, password: string) {
@@ -35,15 +47,17 @@ export class ApiWrapper {
         password
       }
     )
-    this.token = response.data.token
-    this.instance.defaults.headers.common.Authorization = `JWT ${this.token}`
+    this.token = response.data.access
+    this.refreshToken = response.data.refresh
+    this.instance.defaults.headers.common.Authorization = `Bearer ${this.token}`
   }
 
   async renovarToken() {
     const response = await this.instance.post("/autenticacao/token/refresh/", {
-      token: this.token
+      refresh: this.refreshToken
     })
-    this.token = response.data.token
+    this.token = response.data.access
+    this.instance.defaults.headers.common.Authorization = `Bearer ${this.token}`
     return this.token
   }
 
