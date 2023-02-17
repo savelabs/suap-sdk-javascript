@@ -19,7 +19,7 @@ jobs:
         uses: actions/checkout@master
 
       - name: Setup node env 🏗
-        uses: actions/setup-node@v3.1.1
+        uses: actions/setup-node@v3.6.0
         with:
           node-version: ${{ matrix.node }}
           check-latest: true
@@ -29,7 +29,7 @@ jobs:
         run: echo "::set-output name=dir::$(yarn cache dir)"
 
       - name: Cache node_modules 📦
-        uses: actions/cache@v3.0.2
+        uses: actions/cache@v3.2.5
         id: yarn-cache
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
