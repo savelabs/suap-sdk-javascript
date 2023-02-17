@@ -20,7 +20,7 @@ export class ScrapperWrapper {
       baseURL: this.urlBase,
       withCredentials: true,
       headers: {
-        Host: this.urlBase,
+        Host: new URL(this.urlBase).host,
         Origin: this.urlBase,
         Referer: `${this.urlBase}/accounts/login/?next=`,
         "User-Agent": "suap-sdk-javascript"
@@ -43,7 +43,7 @@ export class ScrapperWrapper {
       axios.create({
         baseURL: "https://suap.ifrn.edu.br",
         headers: {
-          Host: this.urlBase,
+          Host: new URL(this.urlBase).host,
           Origin: this.urlBase,
           Referer: `${this.urlBase}/accounts/login/?next=`,
           "User-Agent": "suap-sdk-javascript"
