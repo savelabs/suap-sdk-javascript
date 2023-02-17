@@ -134,6 +134,39 @@ export class ClienteSuap {
       return await this.scrapperWrapper.baixarDocumentoStream(link)
     }
   }
+
+  async calcularIRAPrevisto(
+    anoLetivo: number,
+    periodoLetivo: number
+  ): Promise<number> {
+    const boletins = await this.obterNotas(anoLetivo, periodoLetivo)
+
+    const p1 = boletins
+      .map((boletim) => {
+        if (boletim.quantidade_avaliacoes === 4) {
+          return (
+            ((boletim.nota_etapa_1.nota * 2 +
+              boletim.nota_etapa_2.nota * 2 +
+              boletim.nota_etapa_3.nota * 3 +
+              boletim.nota_etapa_4.nota * 3) /
+              10) *
+            boletim.carga_horaria
+          )
+        } else {
+          return (
+            ((boletim.nota_etapa_1.nota * 2 + boletim.nota_etapa_2.nota * 3) /
+              5) *
+            boletim.carga_horaria
+          )
+        }
+      })
+      .reduce((a, b) => a + b, 0)
+    const p2 = boletins
+      .map((boletim) => boletim.carga_horaria)
+      .reduce((a, b) => a + b, 0)
+
+    return p1 / p2
+  }
 }
 
 export * from "./types"
