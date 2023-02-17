@@ -165,7 +165,7 @@ export class ClienteSuap {
       .map((boletim) => boletim.carga_horaria)
       .reduce((a, b) => a + b, 0)
 
-    return p1 / p2
+    return Number((p1 / p2).toFixed(2))
   }
 }
 
