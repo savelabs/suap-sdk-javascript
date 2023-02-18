@@ -30,7 +30,7 @@ export class ClienteSuap {
     }
   }
 
-  async obterCredenciais(): Promise<Credenciais> {
+  obterCredenciais(): Credenciais {
     const result = {
       matricula: this.matrícula,
       api: this.apiWrapper.token,
@@ -44,7 +44,7 @@ export class ClienteSuap {
     return result
   }
 
-  async loginWithCredentials(credenciais: Credenciais) {
+  async entrarComCredenciais(credenciais: Credenciais) {
     this.matrícula = credenciais.matricula
     this.apiWrapper.loginWithToken(credenciais.api)
     if (!this.usarApenasApi) {
