@@ -55,12 +55,14 @@ export class ClienteSuap {
     }
   }
 
-  async login(matrícula: string, password: string) {
+  async login(matrícula: string, password: string): Promise<Credenciais> {
     this.matrícula = matrícula
     await this.apiWrapper.login(matrícula, password)
     if (!this.usarApenasApi) {
       await this.scrapperWrapper.login(matrícula, password)
     }
+
+    return this.obterCredenciais()
   }
 
   async obterInformaçõesPessoais(): Promise<InformaçõesPessoais> {
@@ -135,12 +137,7 @@ export class ClienteSuap {
     }
   }
 
-  async calcularIRAPrevisto(
-    anoLetivo: number,
-    periodoLetivo: number
-  ): Promise<number> {
-    const boletins = await this.obterNotas(anoLetivo, periodoLetivo)
-
+  calcularIRAPrevisto(boletins: Boletim[]): number {
     const p1 = boletins
       .map((boletim) => {
         if (boletim.quantidade_avaliacoes === 4) {
