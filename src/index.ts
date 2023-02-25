@@ -212,7 +212,7 @@ export class ClienteSuap {
       let diff = 600 - score
       if (diff <= empty) {
         response["situação"] = "Cursando"
-        response.media = Math.round((diff / empty) * 100)
+        response.média = Math.round((diff / empty) * 100)
       } else if (naf === undefined) {
         diff -= empty
         const md = (n1 * 2 + n2 * 2 + n3 * 2 + n4 * 2) / 10
