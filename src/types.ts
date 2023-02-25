@@ -77,13 +77,22 @@ export type DetalhesNota = {
 
 export type Credenciais = {
   matricula: string
-  api: string
+  api: {
+    refresh: string
+    access: string
+  }
   site?: string
 }
 
 export type ClienteSuapArgs = {
   usarApenasApi?: boolean
   urlBase?: string
+}
+
+export type PontuaçãoNecessária = {
+  situação: "Aprovado" | "Reprovado" | "Recuperação" | "Cursando"
+  média?: number
+  nota_prova_final?: number
 }
 
 export type TurmaVirtual = {
@@ -130,3 +139,26 @@ export type InformaçõesTurmaVirtual = {
   aulas: Aulas[]
   materiais_de_aula: MaterialDeAula[]
 }
+
+type Grow<T, A extends Array<T>> = ((x: T, ...xs: A) => void) extends (
+  ...a: infer X
+) => void
+  ? X
+  : never
+type GrowToSize<T, A extends Array<T>, N extends number> = {
+  0: A
+  1: GrowToSize<T, Grow<T, A>, N>
+}[A["length"] extends N ? 0 : 1]
+
+type FixedArray<T, N extends number> = GrowToSize<T, [], N>
+
+export type CalcularNotasAnualArgs =
+  | FixedArray<number, 1>
+  | FixedArray<number, 2>
+  | FixedArray<number, 3>
+  | FixedArray<number, 4>
+  | FixedArray<number, 5>
+export type CalcularNotasSemestralArgs =
+  | FixedArray<number, 1>
+  | FixedArray<number, 2>
+  | FixedArray<number, 3>

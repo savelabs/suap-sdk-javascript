@@ -22,10 +22,19 @@ export class ApiWrapper {
       }
     })
 
+    let erroCount = 0
+
     this.instance.interceptors.response.use(
       (response) => response,
       async (error) => {
         if (error.response.status === 401) {
+          erroCount++
+
+          if (erroCount > 3) {
+            erroCount = 0
+            return Promise.reject(error)
+          }
+
           await this.renovarToken()
           return this.instance.request(error.config)
         }
@@ -34,9 +43,10 @@ export class ApiWrapper {
     )
   }
 
-  loginWithToken(token: string) {
-    this.token = token
-    this.instance.defaults.headers.common.Authorization = `Bearer ${token}`
+  loginWithTokens(refreshToken: string, accessToken: string) {
+    this.refreshToken = refreshToken
+    this.token = accessToken
+    this.instance.defaults.headers.common.Authorization = `Bearer ${this.token}`
   }
 
   async login(matriculation: string, password: string) {
