@@ -227,7 +227,7 @@ export class ClienteSuap {
         } else {
           response["situação"] = "Recuperação"
           response.nota_prova_final = Math.round(result)
-          response.media = onlyFinal ? undefined : 100
+          response.média = onlyFinal ? undefined : 100
         }
       } else {
         const md = score / 10
@@ -238,7 +238,7 @@ export class ClienteSuap {
         const mfd5 = (2 * n1 + 2 * n2 + 3 * n3 + 3 * naf) / 10
         const result = Math.max(mfd1, mfd2, mfd3, mfd4, mfd5)
         response.nota_prova_final = 0
-        response.media = 0
+        response.média = 0
 
         if (result < 60) {
           response["situação"] = "Reprovado"
@@ -282,7 +282,7 @@ export class ClienteSuap {
       let diff = 300 - score
       if (diff <= empty) {
         response["situação"] = "Cursando"
-        response.media = (diff / empty) * 100
+        response.média = (diff / empty) * 100
       } else if (naf === undefined) {
         diff -= empty
         const md = (n1 * 2 + n2 * 3) / 5
@@ -296,7 +296,7 @@ export class ClienteSuap {
         } else {
           response["situação"] = "Recuperação"
           response.nota_prova_final = result
-          response.media = onlyFinal ? undefined : 100
+          response.média = onlyFinal ? undefined : 100
         }
       } else {
         const md = (n1 * 2 + n2 * 3) / 5
