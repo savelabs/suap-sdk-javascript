@@ -1,6 +1,6 @@
-import axios, { AxiosInstance } from "axios"
 import {
   Boletim,
+  InformaçõesPessoais,
   InformaçõesTurmaVirtual,
   PeríodoLetivo,
   TurmaVirtual
@@ -9,109 +9,119 @@ import {
 export class ApiWrapper {
   public token = ""
   public refreshToken = ""
-  public instance: AxiosInstance
   public urlBase = ""
+  private errorCount = 0
 
   constructor(urlBase: string) {
     this.urlBase = urlBase
+  }
 
-    this.instance = axios.create({
-      baseURL: `${this.urlBase}/api/v2`,
-      headers: {
-        "Content-Type": "application/json"
-      }
-    })
+  private async request<T>(
+    method: "GET" | "POST",
+    url: string,
+    data?: any
+  ): Promise<T> {
+    try {
+      const response = await fetch(`${this.urlBase}/api/v2${url}`, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${this.token}`
+        },
+        body: JSON.stringify(data)
+      })
 
-    let erroCount = 0
-
-    this.instance.interceptors.response.use(
-      (response) => response,
-      async (error) => {
-        if (error.response.status === 401) {
-          erroCount++
-
-          if (erroCount > 3) {
-            erroCount = 0
-            return Promise.reject(error)
-          }
-
+      return await response.json()
+    } catch (error) {
+      if (error.response.status === 401) {
+        this.errorCount++
+        if (this.errorCount > 2) {
+          this.errorCount = 0
+          throw error
+        } else {
           await this.renovarToken()
-          return this.instance.request(error.config)
+          return this.request(method, url, data)
         }
-        return Promise.reject(error)
       }
-    )
+    }
   }
 
   loginWithTokens(refreshToken: string, accessToken: string) {
     this.refreshToken = refreshToken
     this.token = accessToken
-    this.instance.defaults.headers.common.Authorization = `Bearer ${this.token}`
   }
 
   async login(matriculation: string, password: string) {
-    const response = await this.instance.post(
-      "/autenticacao/token/?format=json",
+    const response = await fetch(
+      `${this.urlBase}/api/v2/autenticacao/token/?format=json`,
       {
-        username: matriculation,
-        password
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          username: matriculation,
+          password
+        })
       }
     )
-    this.token = response.data.access
-    this.refreshToken = response.data.refresh
-    this.instance.defaults.headers.common.Authorization = `Bearer ${this.token}`
+
+    const data = await response.json()
+
+    this.token = data.access
+    this.refreshToken = data.refresh
   }
 
   async renovarToken() {
-    const response = await this.instance.post("/autenticacao/token/refresh/", {
-      refresh: this.refreshToken
-    })
-    this.token = response.data.access
-    this.instance.defaults.headers.common.Authorization = `Bearer ${this.token}`
+    const data = await this.request<{ access: string }>(
+      "POST",
+      "/autenticacao/token/refresh/",
+      {
+        refresh: this.refreshToken
+      }
+    )
+
+    this.token = data.access
     return this.token
   }
 
-  async obterInformações() {
-    const response = await this.instance.get("/minhas-informacoes/meus-dados/")
-    return response.data
+  obterInformações(): Promise<InformaçõesPessoais> {
+    return this.request<InformaçõesPessoais>(
+      "GET",
+      "/minhas-informacoes/meus-dados/"
+    )
   }
 
-  async obterPeríodosLetivos(): Promise<PeríodoLetivo[]> {
-    const response = await this.instance.get(
+  obterPeríodosLetivos(): Promise<PeríodoLetivo[]> {
+    return this.request<PeríodoLetivo[]>(
+      "GET",
       "/minhas-informacoes/meus-periodos-letivos/"
     )
-    return response.data
   }
 
-  async obterNotas(
-    anoLetivo: number,
-    períodoLetivo: number
-  ): Promise<Boletim[]> {
-    const response = await this.instance.get(
+  obterNotas(anoLetivo: number, períodoLetivo: number): Promise<Boletim[]> {
+    return this.request<Boletim[]>(
+      "GET",
       `/minhas-informacoes/boletim/${anoLetivo}/${períodoLetivo}/`
     )
-
-    return response.data
   }
 
-  async obterTurmasVirtuais(
+  obterTurmasVirtuais(
     anoLetivo: number,
     períodoLetivo: number
   ): Promise<TurmaVirtual[]> {
-    const response = await this.instance.get(
+    return this.request<TurmaVirtual[]>(
+      "GET",
       `/minhas-informacoes/turmas-virtuais/${anoLetivo}/${períodoLetivo}/`
     )
-
-    return response.data
   }
 
-  async obterInformaçõesTurmaVirtual(
+  obterInformaçõesTurmaVirtual(
     códigoDiário: string
   ): Promise<InformaçõesTurmaVirtual> {
-    const response = await this.instance.get(
+    return this.request<InformaçõesTurmaVirtual>(
+      "GET",
       `/minhas-informacoes/turma-virtual/${códigoDiário}/`
     )
-
-    return response.data
   }
 }
