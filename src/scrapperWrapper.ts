@@ -2,37 +2,28 @@ import { load } from "cheerio"
 import { chunk, zipObject } from "./utils"
 import { DetalhesNota, Documento } from "./types"
 import { CookieJar } from "tough-cookie"
-import { CookieAgent } from "http-cookie-agent/undici"
-import { fetch } from "undici"
+import makeFetchCookie from "fetch-cookie"
 
 export class ScrapperWrapper {
   public urlBase: string
-
   public cookies: string
-
   public matrícula: string | null = null
+  private jar = new CookieJar()
+  private fetch = makeFetchCookie(fetch, this.jar)
 
   constructor(urlBase: string) {
     this.urlBase = urlBase
   }
 
-  private request(
-    method: "GET" | "POST",
-    url: string,
-    data?: any,
-    cookieAgent?: CookieAgent
-  ) {
-    return fetch(`${this.urlBase}${url}`, {
+  private request(method: "GET" | "POST", url: string, data?: any) {
+    return this.fetch(`${this.urlBase}${url}`, {
       method,
-      dispatcher: cookieAgent,
-      credentials: "same-origin",
       headers: {
         Host: new URL(this.urlBase).host,
         Origin: this.urlBase,
         Referer: `${this.urlBase}/accounts/login/?next=`,
         "User-Agent": "suap-sdk-javascript",
-        "Content-Type": "application/x-www-form-urlencoded",
-        Cookie: this.cookies
+        "Content-Type": "application/x-www-form-urlencoded"
       },
       body: data
     })
@@ -41,18 +32,15 @@ export class ScrapperWrapper {
   async loginWithCookies(matrícula: string, cookies: string) {
     this.matrícula = matrícula
     this.cookies = cookies
+    this.jar.setCookieSync(cookies, this.urlBase)
   }
 
   async login(matrícula: string, password: string) {
     this.matrícula = matrícula
 
-    const jar = new CookieJar()
+    await this.request("GET", "/accounts/login/?next=")
 
-    const agent = new CookieAgent({ cookies: { jar } })
-
-    await this.request("GET", "/accounts/login/?next=", undefined, agent)
-
-    const cookies = await jar.getCookieString(this.urlBase)
+    const cookies = await this.jar.getCookieString(this.urlBase)
 
     await this.request(
       "POST",
@@ -62,13 +50,12 @@ export class ScrapperWrapper {
         password,
         this_is_the_login_form: "1",
         csrfmiddlewaretoken: cookies.split("csrftoken=")[1].split(";")[0]
-      }).toString(),
-      agent
+      }).toString()
     )
 
-    await this.request("GET", "/", undefined, agent)
+    await this.request("GET", "/")
 
-    this.cookies = await jar.getCookieString(this.urlBase)
+    this.cookies = await this.jar.getCookieString(this.urlBase)
   }
 
   async obterInformações() {
