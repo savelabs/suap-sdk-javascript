@@ -4,7 +4,6 @@ import { DetalhesNota, Documento } from "./types"
 import { CookieJar } from "tough-cookie"
 import { CookieAgent } from "http-cookie-agent/undici"
 import { fetch } from "undici"
-import { Blob } from "buffer"
 
 export class ScrapperWrapper {
   public urlBase: string
@@ -26,6 +25,7 @@ export class ScrapperWrapper {
     return fetch(`${this.urlBase}${url}`, {
       method,
       dispatcher: cookieAgent,
+      credentials: "same-origin",
       headers: {
         Host: new URL(this.urlBase).host,
         Origin: this.urlBase,
@@ -155,10 +155,10 @@ export class ScrapperWrapper {
     return documents
   }
 
-  async baixarDocumento(link: string): Promise<Blob> {
+  async baixarDocumento(link: string): Promise<ArrayBuffer> {
     const response = await this.request("GET", link)
 
-    return await response.blob()
+    return await response.arrayBuffer()
   }
 
   async baixarDocumentoStream(link: string) {

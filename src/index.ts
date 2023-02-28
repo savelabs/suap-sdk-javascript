@@ -14,7 +14,6 @@ import {
   CalcularNotasAnualArgs,
   PontuaçãoNecessária
 } from "./types"
-import { Blob } from "buffer"
 
 export class ClienteSuap {
   private readonly apiWrapper: ApiWrapper
@@ -128,7 +127,7 @@ export class ClienteSuap {
     return this.apiWrapper.renovarToken()
   }
 
-  baixarDocumento(link: string): Promise<Blob> {
+  baixarDocumento(link: string): Promise<ArrayBuffer> {
     if (this.usarApenasApi) {
       throw new Error("Não é possível baixar documentos apenas da API")
     } else {
