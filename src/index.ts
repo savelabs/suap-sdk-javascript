@@ -19,17 +19,21 @@ export class ClienteSuap {
   private readonly apiWrapper: ApiWrapper
   private readonly scrapperWrapper: ScrapperWrapper
   public matrícula: string | null = null
-  public urlBase = ""
 
   private usarApenasApi = false
 
-  constructor({ usarApenasApi, urlBase }: ClienteSuapArgs = {}) {
+  constructor({
+    usarApenasApi,
+    urlBaseApi,
+    urlBaseScrapper
+  }: ClienteSuapArgs = {}) {
     this.usarApenasApi = usarApenasApi ?? false
-    this.urlBase = urlBase ?? "https://suap.ifrn.edu.br"
-    this.apiWrapper = new ApiWrapper(this.urlBase)
+    this.apiWrapper = new ApiWrapper(urlBaseApi ?? "https://suap.ifrn.edu.br")
 
     if (!this.usarApenasApi) {
-      this.scrapperWrapper = new ScrapperWrapper(this.urlBase)
+      this.scrapperWrapper = new ScrapperWrapper(
+        urlBaseScrapper ?? "https://suap.ifrn.edu.br"
+      )
     }
   }
 

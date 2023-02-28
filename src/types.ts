@@ -86,7 +86,8 @@ export type Credenciais = {
 
 export type ClienteSuapArgs = {
   usarApenasApi?: boolean
-  urlBase?: string
+  urlBaseApi?: string
+  urlBaseScrapper?: string
 }
 
 export type PontuaçãoNecessária = {
