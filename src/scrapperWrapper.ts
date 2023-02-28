@@ -1,12 +1,12 @@
-import axios, { AxiosInstance } from "axios"
 import { load } from "cheerio"
 import { chunk, zipObject } from "./utils"
 import { DetalhesNota, Documento } from "./types"
-import { wrapper } from "axios-cookiejar-support"
 import { CookieJar } from "tough-cookie"
+import { CookieAgent } from "http-cookie-agent/undici"
+import { fetch } from "undici"
+import { Blob } from "buffer"
 
 export class ScrapperWrapper {
-  public instance: AxiosInstance
   public urlBase: string
 
   public cookies: string
@@ -15,23 +15,32 @@ export class ScrapperWrapper {
 
   constructor(urlBase: string) {
     this.urlBase = urlBase
+  }
 
-    this.instance = axios.create({
-      baseURL: this.urlBase,
-      withCredentials: true,
+  private request(
+    method: "GET" | "POST",
+    url: string,
+    data?: any,
+    cookieAgent?: CookieAgent
+  ) {
+    return fetch(`${this.urlBase}${url}`, {
+      method,
+      dispatcher: cookieAgent,
       headers: {
         Host: new URL(this.urlBase).host,
         Origin: this.urlBase,
         Referer: `${this.urlBase}/accounts/login/?next=`,
-        "User-Agent": "suap-sdk-javascript"
-      }
+        "User-Agent": "suap-sdk-javascript",
+        "Content-Type": "application/x-www-form-urlencoded",
+        Cookie: this.cookies
+      },
+      body: data
     })
   }
 
   async loginWithCookies(matrícula: string, cookies: string) {
     this.matrícula = matrícula
     this.cookies = cookies
-    this.instance.defaults.headers.common.Cookie = cookies
   }
 
   async login(matrícula: string, password: string) {
@@ -39,43 +48,33 @@ export class ScrapperWrapper {
 
     const jar = new CookieJar()
 
-    const instance = wrapper(
-      axios.create({
-        baseURL: "https://suap.ifrn.edu.br",
-        headers: {
-          Host: new URL(this.urlBase).host,
-          Origin: this.urlBase,
-          Referer: `${this.urlBase}/accounts/login/?next=`,
-          "User-Agent": "suap-sdk-javascript"
-        },
-        jar
-      })
-    )
+    const agent = new CookieAgent({ cookies: { jar } })
 
-    await instance.get("/accounts/login/")
+    await this.request("GET", "/accounts/login/?next=", undefined, agent)
 
     const cookies = await jar.getCookieString(this.urlBase)
 
-    await instance.post(
+    await this.request(
+      "POST",
       "/accounts/login/",
       new URLSearchParams({
         username: matrícula,
         password,
         this_is_the_login_form: "1",
         csrfmiddlewaretoken: cookies.split("csrftoken=")[1].split(";")[0]
-      }).toString()
+      }).toString(),
+      agent
     )
 
-    await instance.get("/")
+    await this.request("GET", "/", undefined, agent)
 
     this.cookies = await jar.getCookieString(this.urlBase)
-    this.instance.defaults.headers.common.Cookie = this.cookies
   }
 
   async obterInformações() {
-    const response = await this.instance.get("/")
+    const response = await this.request("GET", "/")
 
-    const $ = load(response.data)
+    const $ = load(await response.text())
     $("div.box").each((i, el) => {
       const $el = $(el)
       const title = $el.find("h3").text()
@@ -89,18 +88,19 @@ export class ScrapperWrapper {
     anoLetivo: number,
     períodoLetivo: number
   ): Promise<DetalhesNota> {
-    let response = await this.instance.get(
+    let response = await this.request(
+      "GET",
       `/edu/aluno/${this.matrícula}/?tab=boletim&ano_periodo=${anoLetivo}_${períodoLetivo}`
     )
-    let $ = load(response.data)
+    let $ = load(await response.text())
 
     const href = $(`tr:has(> td:contains("${códigoDiário}")) > td > a`).attr(
       "href"
     )
 
-    response = await this.instance.get(href)
+    response = await this.request("GET", href)
 
-    $ = load(response.data)
+    $ = load(await response.text())
 
     const teachers = $("#content > div:nth-child(3) > div").text()
 
@@ -136,9 +136,9 @@ export class ScrapperWrapper {
   }
 
   async obterDocumentos(): Promise<Documento[]> {
-    const response = await this.instance.get(`/edu/aluno/${this.matrícula}/`)
+    const response = await this.request("GET", `/edu/aluno/${this.matrícula}/`)
 
-    const $ = load(response.data)
+    const $ = load(await response.text())
 
     const documents = $(
       "#content > div.title-container > div.action-bar-container > ul > li:nth-child(2) > ul > li > a"
@@ -155,19 +155,15 @@ export class ScrapperWrapper {
     return documents
   }
 
-  async baixarDocumento(link: string): Promise<Buffer> {
-    const { data } = await this.instance.get(link, {
-      responseType: "arraybuffer"
-    })
+  async baixarDocumento(link: string): Promise<Blob> {
+    const response = await this.request("GET", link)
 
-    return data
+    return await response.blob()
   }
 
   async baixarDocumentoStream(link: string) {
-    const { data } = await this.instance.get(link, {
-      responseType: "stream"
-    })
+    const response = await this.request("GET", link)
 
-    return data
+    return response.body
   }
 }
