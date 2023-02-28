@@ -19,8 +19,7 @@
   ],
   "dependencies": {
     "cheerio": "1.0.0-rc.12",
-    "fetch-cookie": "^2.1.0",
-    "tough-cookie": "^4.1.2"
+    "fetch-cookie": "^2.1.0"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.20.2",

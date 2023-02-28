@@ -1,8 +1,26 @@
 import { load } from "cheerio"
 import { chunk, zipObject } from "./utils"
 import { DetalhesNota, Documento } from "./types"
-import { CookieJar } from "tough-cookie"
 import makeFetchCookie from "fetch-cookie"
+
+class CookieJar {
+  private cookies: Map<string, string[]> = new Map()
+
+  public async getCookieString(url: string) {
+    const parsedUrl = new URL(url)
+    url = parsedUrl.protocol + "//" + parsedUrl.host
+    return (this.cookies.get(url) ?? []).join("; ") + ";"
+  }
+
+  public async setCookie(cookie: string, url: string) {
+    const parsedUrl = new URL(url)
+    url = parsedUrl.protocol + "//" + parsedUrl.host
+    this.cookies.set(url, [
+      ...(this.cookies.get(url) ?? []),
+      cookie.split(";")[0]
+    ])
+  }
+}
 
 export class ScrapperWrapper {
   public urlBase: string
@@ -32,7 +50,7 @@ export class ScrapperWrapper {
   async loginWithCookies(matrícula: string, cookies: string) {
     this.matrícula = matrícula
     this.cookies = cookies
-    this.jar.setCookieSync(cookies, this.urlBase)
+    await this.jar.setCookie(cookies, this.urlBase)
   }
 
   async login(matrícula: string, password: string) {
