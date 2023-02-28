@@ -26,14 +26,14 @@ export class ApiWrapper {
         method,
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${this.token}`
+          Authorization: this.token ? `Bearer ${this.token}` : ""
         },
         body: JSON.stringify(data)
       })
 
       return await response.json()
     } catch (error) {
-      if (error.response.status === 401) {
+      if (error.response && error.response.status === 401) {
         this.errorCount++
         if (this.errorCount > 2) {
           this.errorCount = 0
@@ -42,6 +42,8 @@ export class ApiWrapper {
           await this.renovarToken()
           return this.request(method, url, data)
         }
+      } else {
+        throw error
       }
     }
   }
@@ -52,21 +54,14 @@ export class ApiWrapper {
   }
 
   async login(matriculation: string, password: string) {
-    const response = await fetch(
-      `${this.urlBase}/api/v2/autenticacao/token/?format=json`,
+    const data = await this.request<{ access: string; refresh: string }>(
+      "POST",
+      "/autenticacao/token/?format=json",
       {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          username: matriculation,
-          password
-        })
+        username: matriculation,
+        password
       }
     )
-
-    const data = await response.json()
 
     this.token = data.access
     this.refreshToken = data.refresh
