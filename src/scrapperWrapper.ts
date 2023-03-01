@@ -17,6 +17,7 @@ export class ScrapperWrapper {
   private request(method: "GET" | "POST", url: string, data?: any) {
     return this.fetch(`${this.urlBase}${url}`, {
       method,
+      credentials: "include",
       headers: {
         Host: new URL(this.urlBase).host,
         Origin: this.urlBase,
