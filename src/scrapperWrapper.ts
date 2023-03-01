@@ -3,30 +3,11 @@ import { chunk, zipObject } from "./utils"
 import { DetalhesNota, Documento } from "./types"
 import makeFetchCookie from "fetch-cookie"
 
-class CookieJar {
-  private cookies: Map<string, string[]> = new Map()
-
-  public async getCookieString(url: string) {
-    const parsedUrl = new URL(url)
-    url = parsedUrl.protocol + "//" + parsedUrl.host
-    return (this.cookies.get(url) ?? []).join("; ") + ";"
-  }
-
-  public async setCookie(cookie: string, url: string) {
-    const parsedUrl = new URL(url)
-    url = parsedUrl.protocol + "//" + parsedUrl.host
-    this.cookies.set(url, [
-      ...(this.cookies.get(url) ?? []),
-      cookie.split(";")[0]
-    ])
-  }
-}
-
 export class ScrapperWrapper {
   public urlBase: string
   public cookies: string
   public matrícula: string | null = null
-  private jar = new CookieJar()
+  private jar = new makeFetchCookie.toughCookie.CookieJar()
   private fetch = makeFetchCookie(fetch, this.jar)
 
   constructor(urlBase: string) {
